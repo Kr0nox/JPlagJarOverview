@@ -21,7 +21,7 @@ jobs:
         shell: bash
         run: |
           touch src/token.json
-          cat {"token": {{secrets.API_TOKEN}}}
+          echo "{\"token\": "{{secrets.API_TOKEN}}\"}" > src/token.json
 
       - name: Install and Build 🔧
         run: |
