@@ -50,6 +50,5 @@ export async function fetchArtifactZip(artifact: Artifact) {
 }
 
 async function getJson<T>(url:string): Promise<T> {
-  console.log(auth)
   return fetch(baseUrl + url, {headers: {'Authorization': auth}}).then(res => res.json() as T)
 }
