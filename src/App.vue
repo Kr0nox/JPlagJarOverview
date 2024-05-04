@@ -2,11 +2,21 @@
   <div
     class="h-screen w-screen flex flex-col min-h-screen overflow-hidden bg-zinc-950 text-white p-5 pb-2"
   >
-    <h1 class="text-3xl">JPlag Jar Download Overview</h1>
-    <p class="mb-4">
-      Just click on an entry and it will download the jar. This can take a few
-      seconds, due to the GitHub API.
-    </p>
+    <div class="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] mb-4 gap-3">
+      <h1 class="text-3xl col-start-1 row-start-1">
+        JPlag Jar Download Overview
+      </h1>
+      <input
+        class="col-start-2 row-start-1 rounded-md bg-zinc-800 border-zinc-950 text-white px-1 outline-none"
+        v-model="apiToken"
+        placeholder="GitHub API Token (only used for getting jars)"
+      />
+      <p class="col-span-2 col-start-1 row-start-2">
+        Just click on an entry and it will download the jar. This can take a few
+        seconds, due to the GitHub API.
+      </p>
+    </div>
+
     <div class="flex flex-1 overflow-hidden gap-3">
       <Panel
         class="flex-1 max-h-full"
@@ -19,7 +29,7 @@
         class="flex-1 max-h-full"
         name="Open Pull Requests"
         :always-shown-options="prs"
-        :options="dependenciePrs"
+        :options="dependenciesPrs"
         more-name="Dependencies"
       />
       <Panel
@@ -39,14 +49,16 @@
       >.
     </div>
   </div>
-  <div v-if="showLoadingScreen" class="z-50 h-screen w-screen absolute top-0 left-0 right-0 bottom-0 bg-white bg-opacity-70 text-3xl text-black flex text-center items-center justify-center align-middle">
+  <div
+    v-if="showLoadingScreen"
+    class="z-50 h-screen w-screen absolute top-0 left-0 right-0 bottom-0 bg-white bg-opacity-70 text-3xl text-black flex text-center items-center justify-center align-middle"
+  >
     <div class="h-fit w-fit">
       <div
-      class="mx-auto h-16 w-16 animate-spin rounded-full border-8 border-gray-500 border-t-black"
-    ></div>
-    Providing Jar...
+        class="mx-auto h-16 w-16 animate-spin rounded-full border-8 border-gray-500 border-t-black"
+      ></div>
+      Providing Jar...
     </div>
-    
   </div>
 </template>
 
@@ -68,34 +80,35 @@ import {
 } from "./model/apiInterface";
 import { Release } from "./model/apiModel";
 
+const apiToken = ref("");
+provide("apiToken", apiToken);
+
 const newestRelease: Ref<JarPlace> = ref(
-  new DummyJarPlace("Loading Releases...")
+  new DummyJarPlace("No Token provided yet")
 );
 const releases: Ref<JarPlace[]> = ref([]);
+
+const prs: Ref<JarPlace[]> = ref([new DummyJarPlace("No Token provided yet")]);
+const dependenciesPrs: Ref<JarPlace[]> = ref([]);
+
+const mainDevBranch: Ref<JarPlace[]> = ref([
+  new DummyJarPlace("No Token provided yet"),
+]);
+const branches: Ref<JarPlace[]> = ref([]);
+
 getAllReleases().then((data) => {
-  console.log("R", data)
   newestRelease.value = new ReleaseJarPlace(data[0]);
   releases.value = data.map((release: Release) => new ReleaseJarPlace(release));
 });
-
-const prs: Ref<JarPlace[]> = ref([new DummyJarPlace("Loading Prs...")]);
-const dependenciePrs: Ref<JarPlace[]> = ref([]);
 getAllPrs().then((data) => {
-  console.log("P", data)
   prs.value = data
     .filter((pr) => !pr.title.includes("Dependency"))
     .map((pr) => new PullRequestJarPlace(pr));
-  dependenciePrs.value = data
+  dependenciesPrs.value = data
     .filter((pr) => pr.title.includes("Dependency"))
     .map((pr) => new PullRequestJarPlace(pr));
 });
-
-const mainDevBranch: Ref<JarPlace[]> = ref([
-  new DummyJarPlace("Loading Branches..."),
-]);
-const branches: Ref<JarPlace[]> = ref([]);
 getAllBranches().then((data) => {
-  console.log("B", data)
   mainDevBranch.value = data
     .filter((branch) => branch.name === "main" || branch.name === "develop")
     .sort((a, _) => (a.name == "main" ? -1 : 1))

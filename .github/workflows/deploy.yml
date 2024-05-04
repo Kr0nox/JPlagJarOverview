@@ -17,12 +17,6 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Set token for actions
-        shell: bash
-        run: |
-          touch src/token.json
-          echo '{"token": "${{secrets.API_TOKEN}}"}' > src/token.json
-
       - name: Install and Build 🔧
         run: |
           npm install

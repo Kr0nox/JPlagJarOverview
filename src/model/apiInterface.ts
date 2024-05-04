@@ -1,12 +1,9 @@
 import { Artifact, Branch, PullRequest, Release, WorkflowRun } from "./apiModel"
-import token from '../token.json'
 
 const owner = 'jplag'
 const repo = 'JPlag'
 const baseUrl = `https://api.github.com/repos/${owner}/${repo}`
 
-
-const auth = 'Bearer ' + token['token']
 
 export async function getAllBranches() {
   return getJson<Branch[]>(`/branches`)
@@ -45,10 +42,11 @@ export async function getArtifacts(id: number) {
   return artifacts
 }
 
-export async function fetchArtifactZip(artifact: Artifact) {
-  return fetch(artifact.archive_download_url, {headers: {'Authorization': auth}}).then(res => res.blob())
+export async function fetchArtifactZip(artifact: Artifact, apiToken: string) {
+  return fetch(artifact.archive_download_url, {headers: {'Authorization': `Bearer ${apiToken}`}}).then(res => res.blob())
 }
 
-async function getJson<T>(url:string): Promise<T> {
-  return fetch(baseUrl + url, {headers: {'Authorization': auth}}).then(res => res.json() as T)
+async function getJson<T>(url:string, apiToken?: string): Promise<T> {
+  const options = apiToken ? {headers: {'Authorization': `Bearer ${apiToken}`}} : {}
+  return fetch(baseUrl + url, options).then(res => res.json() as T)
 }

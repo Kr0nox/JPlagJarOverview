@@ -4,6 +4,9 @@ This tool helps keep an overview over the current jars in the [JPlag](https://gi
 
 This tool is not affiliated with [JPlag](https://github.com/jplag/JPlag) or the [Karlsrue Institute of Technology](https://www.kit.edu). It is privatly maintained.
 
+## Usage
+Just open the website. Then insert a personal access token in the input and click the go button. Your access token does not get stored. It is just used to access the api. If you want to be able to access artifacts your token needs the permissions listed here: https://docs.github.com/en/rest/actions/artifacts?apiVersion=2022-11-28#download-an-artifact
+
 ## How it works
 The tool operates using the [GitHub Rest API](https://docs.github.com/en/rest). 
 For the releases, it just redirects to the download link for the jar attached to the release.
@@ -13,10 +16,4 @@ For branches and pull requests, it fetches the workflow from the last commit and
 This is a vue project, so you need Node.js and npm installed.
 1) Clone the repository
 2) run `npm install`	
-3) create a file called `src/token.json` with the following content:
-```json
-{
-  "token": YOUR_GITHUB_TOKEN
-}
-```
-If you want to be able to access artifacts your token needs the permissions listed here: https://docs.github.com/en/rest/actions/artifacts?apiVersion=2022-11-28#download-an-artifact
+3) run `npm run dev`

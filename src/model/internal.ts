@@ -5,7 +5,7 @@ import { extractJarFromZip } from "./zipHandling";
 export abstract class JarPlace {
   abstract getJarName(): string;
 
-  abstract getJarDownloadLink(): Promise<string>;
+  abstract getJarDownloadLink(apiToken: string): Promise<string>;
 }
 
 export class ReleaseJarPlace extends JarPlace {
@@ -17,7 +17,7 @@ export class ReleaseJarPlace extends JarPlace {
     return this.release.name ?? this.release.tag_name ?? "Unknown";
   }
 
-  async getJarDownloadLink(): Promise<string> {
+  async getJarDownloadLink(_: string): Promise<string> {
     for (const asset of this.release.assets) {
       if (
         asset.content_type === "application/java-archive" ||
@@ -33,22 +33,22 @@ export class ReleaseJarPlace extends JarPlace {
 abstract class ArtifactJarPlace extends JarPlace {
   abstract getSha(): string;
 
-  async getJarDownloadLink(): Promise<string> {
+  async getJarDownloadLink(apiToken: string): Promise<string> {
     const workflow_runs = await getWorkflowRuns(this.getSha());
     for (const run of workflow_runs) {
       if (run.name == "Complete e2e Test") {
-        const artifacts = await getArtifacts(run.id);
+        const artifacts = await getArtifacts(run.id, apiToken);
         for (const artifact of artifacts) {
           if (artifact.name == "JPlag") {
-            return this.buildDownloadLink(await fetchArtifactZip(artifact))
+            return this.buildDownloadLink(await fetchArtifactZip(artifact, apiToken))
           }
         }
       }
       if (run.name == "Build") {
-        const artifacts = await getArtifacts(run.id);
+        const artifacts = await getArtifacts(run.id, apiToken);
         for (const artifact of artifacts) {
           if (artifact.name == "JPlag Jar") {
-            return this.buildDownloadLink(await fetchArtifactZip(artifact))
+            return this.buildDownloadLink(await fetchArtifactZip(artifact, apiToken))
           }
         }
       }
