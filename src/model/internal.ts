@@ -37,7 +37,7 @@ abstract class ArtifactJarPlace extends JarPlace {
     const workflow_runs = await getWorkflowRuns(this.getSha());
     for (const run of workflow_runs) {
       if (run.name == "Complete e2e Test") {
-        const artifacts = await getArtifacts(run.id, apiToken);
+        const artifacts = await getArtifacts(run.id);
         for (const artifact of artifacts) {
           if (artifact.name == "JPlag") {
             return this.buildDownloadLink(await fetchArtifactZip(artifact, apiToken))
@@ -45,7 +45,7 @@ abstract class ArtifactJarPlace extends JarPlace {
         }
       }
       if (run.name == "Build") {
-        const artifacts = await getArtifacts(run.id, apiToken);
+        const artifacts = await getArtifacts(run.id);
         for (const artifact of artifacts) {
           if (artifact.name == "JPlag Jar") {
             return this.buildDownloadLink(await fetchArtifactZip(artifact, apiToken))
