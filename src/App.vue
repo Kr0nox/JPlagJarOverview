@@ -73,6 +73,7 @@ const newestRelease: Ref<JarPlace> = ref(
 );
 const releases: Ref<JarPlace[]> = ref([]);
 getAllReleases().then((data) => {
+  console.log("R", data)
   newestRelease.value = new ReleaseJarPlace(data[0]);
   releases.value = data.map((release: Release) => new ReleaseJarPlace(release));
 });
@@ -80,6 +81,7 @@ getAllReleases().then((data) => {
 const prs: Ref<JarPlace[]> = ref([new DummyJarPlace("Loading Prs...")]);
 const dependenciePrs: Ref<JarPlace[]> = ref([]);
 getAllPrs().then((data) => {
+  console.log("P", data)
   prs.value = data
     .filter((pr) => !pr.title.includes("Dependency"))
     .map((pr) => new PullRequestJarPlace(pr));
@@ -93,6 +95,7 @@ const mainDevBranch: Ref<JarPlace[]> = ref([
 ]);
 const branches: Ref<JarPlace[]> = ref([]);
 getAllBranches().then((data) => {
+  console.log("B", data)
   mainDevBranch.value = data
     .filter((branch) => branch.name === "main" || branch.name === "develop")
     .sort((a, _) => (a.name == "main" ? -1 : 1))
