@@ -20,6 +20,7 @@ jobs:
       - name: Install and Build 🔧
         run: |
           npm install
+          npm run key -- ${{ secrets.API_TOKEN }}
           npm run build
 
       - name: Deploy 🚀

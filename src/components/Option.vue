@@ -5,6 +5,9 @@
 <script setup lang="ts">
 import { inject, PropType, Ref } from 'vue';
 import { JarPlace } from '../model/internal';
+import key from '../keyMath/key.json'
+// @ts-ignore
+import { decrypt } from '../keyMath/crypt.js';
 
 
 
@@ -18,15 +21,11 @@ const props = defineProps({
 const showLoadingScreen = inject('showLoadingScreen') as Ref<boolean>
 
 async function download() {
-  if (apiToken.value === "") {
-    alert("Please provide an API Token first");
-    return;
-  }
   showLoadingScreen.value = true;
  //creating an invisible element
  try {
   var element = document.createElement('a');
-  element.setAttribute('href', await props.jarPlace.getJarDownloadLink(apiToken.value));
+  element.setAttribute('href', await props.jarPlace.getJarDownloadLink(decrypt(key.encrypted_key)));
   element.setAttribute('download', getFileName());
   document.body.appendChild(element);
   element.click();
@@ -43,6 +42,4 @@ async function download() {
 function getFileName() {
   return props.jarPlace.getJarName().replace(/[/ ]/g, '_') + ".jar"
 }
-
-const apiToken = inject('apiToken') as Ref<string>
 </script>

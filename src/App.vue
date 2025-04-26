@@ -2,16 +2,11 @@
   <div
     class="h-screen w-screen flex flex-col min-h-screen overflow-hidden bg-zinc-950 text-white p-5 pb-2"
   >
-    <div class="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] mb-4 gap-3">
+    <div class="grid grid-cols-[auto_1fr] grid-rows-1 mb-4 gap-3 gap-x-10">
       <h1 class="text-3xl col-start-1 row-start-1">
         JPlag Jar Download Overview
       </h1>
-      <input
-        class="col-start-2 row-start-1 rounded-md bg-zinc-800 border-zinc-950 text-white px-1 outline-none"
-        v-model="apiToken"
-        placeholder="GitHub API Token (only used for getting jars)"
-      />
-      <p class="col-span-2 col-start-1 row-start-2">
+      <p class="col-span-1 col-start-2 row-start-1 flex items-center text-zinc-500 text-right justify-end">
         Just click on an entry and it will download the jar. This can take a few
         seconds, due to the GitHub API.
       </p>
@@ -79,9 +74,6 @@ import {
   getAllReleases,
 } from "./model/apiInterface";
 import { Release } from "./model/apiModel";
-
-const apiToken = ref("");
-provide("apiToken", apiToken);
 
 const newestRelease: Ref<JarPlace> = ref(
   new DummyJarPlace("No Token provided yet")

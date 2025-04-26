@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "key": "node src/keyMath/encrypt.js"
   },
   "dependencies": {
     "jszip": "^3.10.1",
