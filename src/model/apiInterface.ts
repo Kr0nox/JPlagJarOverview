@@ -9,12 +9,24 @@ export async function getAllBranches() {
   return getJson<Branch[]>(`/branches`)
 }
 
+export async function getBranch(branchName: string) {
+  return getJson<Branch>(`/branches/${branchName}`)
+}
+
 export async function getAllPrs() {
   return getJson<PullRequest[]>(`/pulls?state=open`)
 }
 
+export async function getPr(prNumber: number) {
+  return getJson<PullRequest>(`/pulls/${prNumber}`)
+}
+
 export async function getAllReleases() {
   return getJson<Release[]>(`/releases`)
+}
+
+export async function getRelease(tag: string) {
+  return getJson<Release>(`/releases/tags/${tag}`)
 }
 
 export async function getWorkflowRuns(sha: string) {

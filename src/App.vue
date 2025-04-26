@@ -72,23 +72,29 @@ import {
   getAllBranches,
   getAllPrs,
   getAllReleases,
+  getBranch,
+  getPr,
+  getRelease,
 } from "./model/apiInterface";
 import { Release } from "./model/apiModel";
+import { getPRNumber, getQueryType, getReleaseTag, QueryType } from "./model/query";
+import { downloadJar } from "./model/download";
 
 const newestRelease: Ref<JarPlace> = ref(
-  new DummyJarPlace("No Token provided yet")
+  new DummyJarPlace("Fetching latest release...")
 );
 const releases: Ref<JarPlace[]> = ref([]);
 
-const prs: Ref<JarPlace[]> = ref([new DummyJarPlace("No Token provided yet")]);
+const prs: Ref<JarPlace[]> = ref([new DummyJarPlace("Fetching PRs...")]);
 const dependenciesPrs: Ref<JarPlace[]> = ref([]);
 
 const mainDevBranch: Ref<JarPlace[]> = ref([
-  new DummyJarPlace("No Token provided yet"),
+  new DummyJarPlace("Fetching branches..."),
 ]);
 const branches: Ref<JarPlace[]> = ref([]);
 
-getAllReleases().then((data) => {
+
+getAllReleases().then(async (data) => {
   newestRelease.value = new ReleaseJarPlace(data[0]);
   releases.value = data.map((release: Release) => new ReleaseJarPlace(release));
 });
@@ -116,4 +122,26 @@ getAllBranches().then((data) => {
 
 const showLoadingScreen = ref(false);
 provide("showLoadingScreen", showLoadingScreen);
+
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const directDownloadQuery = urlParams.get("dl") ?? undefined;
+const queryType = directDownloadQuery != undefined ? getQueryType(directDownloadQuery) : undefined;
+if (queryType !== undefined) {
+  showLoadingScreen.value = true;
+}
+switch (queryType) {
+  case QueryType.RELEASE:
+    getRelease(getReleaseTag(directDownloadQuery!)).then((r) => new ReleaseJarPlace(r)).then((r) => downloadJar(r)).then(() => showLoadingScreen.value = false);
+    break;
+  case QueryType.PR:
+    getPr(getPRNumber(directDownloadQuery!)).then((r) => new PullRequestJarPlace(r)).then((r) => downloadJar(r)).then(() => showLoadingScreen.value = false);
+    break
+  case QueryType.BRANCH:
+    getBranch(directDownloadQuery!).then((r) => new BranchJarPlace(r)).then((r) => downloadJar(r)).then(() => showLoadingScreen.value = false);
+    break;
+  default:
+    showLoadingScreen.value = false;
+    break;
+}
 </script>

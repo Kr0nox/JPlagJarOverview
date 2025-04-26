@@ -1,13 +1,20 @@
 <template>
-  <div class="flex cursor-pointer items-center" @click="download()"><span class="flex-1">{{ jarPlace.getJarName() }}</span><img class="h-5 invert" src="../assets/download-solid.svg" alt="Download"></div>
+  <div class="flex gap-x-5 items-center">
+    <button class="flex cursor-pointer items-center flex-1 gap-x-1" @click="download()">
+      <span class="flex-1 text-left">{{ jarPlace.getJarName() }}</span>
+      <img class="h-5 invert" src="../assets/download-solid.svg" alt="Download">
+    </button>
+
+    <button class="cursor-pointer flex items-center active:scale-75 duration-200" @click="copyLink()">
+      <img class="h-5" src="../assets/link-solid.svg" alt="Copy link">
+    </button>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { inject, PropType, Ref } from 'vue';
 import { JarPlace } from '../model/internal';
-import key from '../keyMath/key.json'
-// @ts-ignore
-import { decrypt } from '../keyMath/crypt.js';
+import { downloadJar } from '../model/download.js';
 
 
 
@@ -22,24 +29,11 @@ const showLoadingScreen = inject('showLoadingScreen') as Ref<boolean>
 
 async function download() {
   showLoadingScreen.value = true;
- //creating an invisible element
- try {
-  var element = document.createElement('a');
-  element.setAttribute('href', await props.jarPlace.getJarDownloadLink(decrypt(key.encrypted_key)));
-  element.setAttribute('download', getFileName());
-  document.body.appendChild(element);
-  element.click();
-
-  document.body.removeChild(element);
- } catch (e) {
-    console.error(e)
-   alert('Error downloading file\n'+ (e as Error))
- }
+  downloadJar(props.jarPlace)
   showLoadingScreen.value = false;
 }
 
-// TODO: Add time to name
-function getFileName() {
-  return props.jarPlace.getJarName().replace(/[/ ]/g, '_') + ".jar"
+function copyLink() {
+  navigator.clipboard.writeText(window.location + "?dl=" + props.jarPlace.getQueryValue())
 }
 </script>

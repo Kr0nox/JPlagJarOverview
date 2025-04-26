@@ -6,6 +6,8 @@ export abstract class JarPlace {
   abstract getJarName(): string;
 
   abstract getJarDownloadLink(apiToken: string): Promise<string>;
+
+  abstract getQueryValue(): string
 }
 
 export class ReleaseJarPlace extends JarPlace {
@@ -27,6 +29,10 @@ export class ReleaseJarPlace extends JarPlace {
       }
     }
     throw "No jar found in release assets";
+  }
+
+  getQueryValue(): string {
+    return this.release.tag_name ?? this.release.name ?? "Unknown";
   }
 }
 
@@ -75,6 +81,10 @@ export class PullRequestJarPlace extends ArtifactJarPlace {
     return `#${this.pr.number} ${this.pr.title}`
   }
 
+  getQueryValue(): string {
+    return `#${this.pr.number}`
+  }
+
 }
 
 export class BranchJarPlace extends ArtifactJarPlace {
@@ -87,6 +97,10 @@ export class BranchJarPlace extends ArtifactJarPlace {
     return this.branch.commit.sha;
   }
   getJarName(): string {
+    return this.branch.name;
+  }
+
+  getQueryValue(): string {
     return this.branch.name;
   }
 }
@@ -102,5 +116,9 @@ export class DummyJarPlace extends JarPlace {
 
   async getJarDownloadLink(): Promise<string> {
     return "";
+  }
+
+  getQueryValue(): string {
+    return "unknown";
   }
 }
