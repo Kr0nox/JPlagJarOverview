@@ -29,7 +29,7 @@ const showLoadingScreen = inject('showLoadingScreen') as Ref<boolean>
 
 async function download() {
   showLoadingScreen.value = true;
-  downloadJar(props.jarPlace)
+  await downloadJar(props.jarPlace)
   showLoadingScreen.value = false;
 }
 
