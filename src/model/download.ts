@@ -19,8 +19,17 @@ export async function downloadJar(jar: JarPlace) {
     }
 }
 
-// TODO: Add time to name
 function getFileName(jar: JarPlace) {
-    return jar.getJarName().replace(/[/ ]/g, '_') + ".jar"
-  }
+    const date = new Date()
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+    const hours = date.getHours()
+    const minutes = date.getMinutes()
+    const dateString = `${year}${padNumber(month)}${padNumber(day)}${padNumber(hours)}${padNumber(minutes)}`
+    return jar.getJarName().replace(/[/ ]/g, '_') + "-" + dateString + ".jar"
+}
 
+function padNumber(num: number) {
+    return num.toString().padStart(2, "0")
+}
