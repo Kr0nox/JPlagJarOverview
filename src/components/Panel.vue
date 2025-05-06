@@ -1,14 +1,14 @@
 <template>
   <div class="rounded-md flex flex-col bg-zinc-800 overflow-hidden py-1 px-2">
     <h1 class="text-xl" v-if="alwaysShownOptions.length > 0">{{ name }}</h1>
-    <div class="overflow-scroll flex-1 space-y-1">
+    <div class="overflow-scroll flex-1 space-y-3 mt-2">
       <Option
         class="ml-2"
         v-for="j in alwaysShownOptions"
         :key="j.getJarName()"
         :jar-place="j"
       />
-      <div>
+      <div v-if="options.length > 0" class="mt-8">
         <div
           class="flex cursor-pointer"
           :class="alwaysShownOptions.length > 0 ? 'text-lg mt-2' : 'text-xl'"
@@ -19,7 +19,7 @@
           }}</span>
           <span>{{ expanded ? "&#9650;" : "&#9660;" }}</span>
         </div>
-        <div v-if="expanded" class="space-y-2">
+        <div v-if="expanded" class="space-y-3 mt-2">
           <Option
             class="ml-2"
             v-for="j in options"
