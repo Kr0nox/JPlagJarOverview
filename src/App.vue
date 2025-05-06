@@ -4,7 +4,7 @@
   >
     <div class="grid grid-cols-[auto_1fr] grid-rows-1 mb-4 gap-3 gap-x-10">
       <h1 class="text-3xl col-start-1 row-start-1">
-        JPlag Jar Download Overview
+        JPlag Jar Downloader
       </h1>
       <p class="col-span-1 col-start-2 row-start-1 flex items-center text-zinc-500 text-right justify-end">
         Just click on an entry and it will download the jar. This can take a few
@@ -35,6 +35,7 @@
       />
     </div>
     <div class="text-xs mt-2">
+      Developed by <a class="underline text-blue-400" href="https://github.com/Kr0nox/JPlagJarOverview">Kronox</a>.
       This page is not affiliated with
       <a class="underline text-blue-400" href="github.com/jplag/Jplag">JPlag</a
       >. It is a privatly maintained page to provide easy access to the latest
