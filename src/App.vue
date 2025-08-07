@@ -94,12 +94,11 @@ const mainDevBranch: Ref<JarPlace[]> = ref([
 ]);
 const branches: Ref<JarPlace[]> = ref([]);
 
-
-getAllReleases().then(async (data) => {
+const releaseFetch = getAllReleases().then(async (data) => {
   newestRelease.value = new ReleaseJarPlace(data[0]);
   releases.value = data.map((release: Release) => new ReleaseJarPlace(release));
 });
-getAllPrs().then((data) => {
+const prFetch = getAllPrs().then((data) => {
   prs.value = data
     .filter((pr) => !pr.title.includes("Dependency"))
     .map((pr) => new PullRequestJarPlace(pr));
@@ -107,7 +106,7 @@ getAllPrs().then((data) => {
     .filter((pr) => pr.title.includes("Dependency"))
     .map((pr) => new PullRequestJarPlace(pr));
 });
-getAllBranches().then((data) => {
+const branchFetch = getAllBranches().then((data) => {
   mainDevBranch.value = data
     .filter((branch) => branch.name === "main" || branch.name === "develop")
     .sort((a, _) => (a.name == "main" ? -1 : 1))
@@ -120,29 +119,35 @@ getAllBranches().then((data) => {
     )
     .map((branch) => new BranchJarPlace(branch));
 });
+Promise.all([releaseFetch, prFetch, branchFetch]).then(() => {
+  loadFromQuery()
+});
 
 const showLoadingScreen = ref(false);
 provide("showLoadingScreen", showLoadingScreen);
 
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
-const directDownloadQuery = urlParams.get("dl") ?? undefined;
-const queryType = directDownloadQuery != undefined ? getQueryType(directDownloadQuery) : undefined;
-if (queryType !== undefined) {
-  showLoadingScreen.value = true;
+function loadFromQuery() {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const directDownloadQuery = urlParams.get("dl") ?? undefined;
+  const queryType = directDownloadQuery != undefined ? getQueryType(directDownloadQuery) : undefined;
+  if (queryType !== undefined) {
+    showLoadingScreen.value = true;
+  }
+  switch (queryType) {
+    case QueryType.RELEASE:
+      getRelease(getReleaseTag(directDownloadQuery!)).then((r) => new ReleaseJarPlace(r)).then((r) => downloadJar(r)).then(() => showLoadingScreen.value = false);
+      break;
+    case QueryType.PR:
+      getPr(getPRNumber(directDownloadQuery!)).then((r) => new PullRequestJarPlace(r)).then((r) => downloadJar(r)).then(() => showLoadingScreen.value = false);
+      break
+    case QueryType.BRANCH:
+      getBranch(directDownloadQuery!).then((r) => new BranchJarPlace(r)).then((r) => downloadJar(r)).then(() => showLoadingScreen.value = false);
+      break;
+    default:
+      showLoadingScreen.value = false;
+      break;
+  }
 }
-switch (queryType) {
-  case QueryType.RELEASE:
-    getRelease(getReleaseTag(directDownloadQuery!)).then((r) => new ReleaseJarPlace(r)).then((r) => downloadJar(r)).then(() => showLoadingScreen.value = false);
-    break;
-  case QueryType.PR:
-    getPr(getPRNumber(directDownloadQuery!)).then((r) => new PullRequestJarPlace(r)).then((r) => downloadJar(r)).then(() => showLoadingScreen.value = false);
-    break
-  case QueryType.BRANCH:
-    getBranch(directDownloadQuery!).then((r) => new BranchJarPlace(r)).then((r) => downloadJar(r)).then(() => showLoadingScreen.value = false);
-    break;
-  default:
-    showLoadingScreen.value = false;
-    break;
-}
+
 </script>
