@@ -82,7 +82,7 @@ export class PullRequestJarPlace extends ArtifactJarPlace {
   }
 
   getQueryValue(): string {
-    return `#${this.pr.number}`
+    return `%23${this.pr.number}`
   }
 
 }
