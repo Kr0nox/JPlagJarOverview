@@ -139,8 +139,7 @@ function loadFromQuery() {
       getRelease(getReleaseTag(directDownloadQuery!)).then((r) => new ReleaseJarPlace(r)).then((r) => downloadJar(r)).then(() => showLoadingScreen.value = false);
       break;
     case QueryType.PR:
-      getPr(getPRNumber(directDownloadQuery!)).then(r => console.log(r))
-      //getPr(getPRNumber(directDownloadQuery!)).then((r) => new PullRequestJarPlace(r)).then((r) => downloadJar(r)).then(() => showLoadingScreen.value = false);
+      getPr(getPRNumber(directDownloadQuery!)).then((r) => new PullRequestJarPlace(r)).then((r) => downloadJar(r)).then(() => showLoadingScreen.value = false);
       break
     case QueryType.BRANCH:
       getBranch(directDownloadQuery!).then((r) => new BranchJarPlace(r)).then((r) => downloadJar(r)).then(() => showLoadingScreen.value = false);

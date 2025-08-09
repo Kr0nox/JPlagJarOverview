@@ -1,32 +1,35 @@
 import { Artifact, Branch, PullRequest, Release, WorkflowRun } from "./apiModel"
-
+import keyjson from '../keyMath/key.json'
+// @ts-ignore
+import { decrypt } from '../keyMath/crypt.js';
 const owner = 'jplag'
 const repo = 'JPlag'
 const baseUrl = `https://api.github.com/repos/${owner}/${repo}`
 
+const key = decrypt(keyjson.encrypted_key)
 
 export async function getAllBranches() {
-  return getJson<Branch[]>(`/branches`)
+  return getJson<Branch[]>(`/branches`, key)
 }
 
 export async function getBranch(branchName: string) {
-  return getJson<Branch>(`/branches/${branchName}`)
+  return getJson<Branch>(`/branches/${branchName}`, key)
 }
 
 export async function getAllPrs() {
-  return getJson<PullRequest[]>(`/pulls?state=open`)
+  return getJson<PullRequest[]>(`/pulls?state=open`, key)
 }
 
 export async function getPr(prNumber: number) {
-  return getJson<PullRequest>(`/pulls/${prNumber}`)
+  return getJson<PullRequest>(`/pulls/${prNumber}`, key)
 }
 
 export async function getAllReleases() {
-  return getJson<Release[]>(`/releases`)
+  return getJson<Release[]>(`/releases`, key)
 }
 
 export async function getRelease(tag: string) {
-  return getJson<Release>(`/releases/tags/${tag}`)
+  return getJson<Release>(`/releases/tags/${tag}`, key)
 }
 
 export async function getWorkflowRuns(sha: string) {
@@ -34,7 +37,7 @@ export async function getWorkflowRuns(sha: string) {
   let page = 1
   let count = 0
   do {
-    const r = await getJson<{total_count:number, workflow_runs: WorkflowRun[]}>(`/actions/runs?head_sha=${sha}&page=${page}`)
+    const r = await getJson<{total_count:number, workflow_runs: WorkflowRun[]}>(`/actions/runs?head_sha=${sha}&page=${page}`, key)
     runs.push(...r.workflow_runs)
     count = r.total_count
   } while (runs.length < count)
@@ -47,7 +50,7 @@ export async function getArtifacts(id: number) {
   let page = 1
   let count = 0
   do {
-    const r = await getJson<{total_count:number, artifacts: Artifact[]}>(`/actions/runs/${id}/artifacts?page=${page}`)
+    const r = await getJson<{total_count:number, artifacts: Artifact[]}>(`/actions/runs/${id}/artifacts?page=${page}`, key)
     artifacts.push(...r.artifacts)
     count = r.total_count
   } while (artifacts.length < count)

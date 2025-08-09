@@ -34,6 +34,6 @@ async function download() {
 }
 
 function copyLink() {
-  navigator.clipboard.writeText(window.location + "?dl=" + props.jarPlace.getQueryValue())
+  navigator.clipboard.writeText(window.location.origin + "?dl=" + props.jarPlace.getQueryValue())
 }
 </script>
